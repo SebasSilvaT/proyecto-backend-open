@@ -8,5 +8,4 @@ import java.util.Optional;
 public interface AchievementRepository extends JpaRepository<Achievement, Long> {
     Optional<Achievement> findByIdAndUserId(Long achievementId, Long userId);
 
-    void deleteByIdAndUserId(Long achievementId, Long userId);
 }

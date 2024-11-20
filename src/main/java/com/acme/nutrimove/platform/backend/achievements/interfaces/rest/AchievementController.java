@@ -88,9 +88,9 @@ public class AchievementController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}/{userId}")
-    public ResponseEntity<Void> deleteAchievement(@PathVariable Long id, @PathVariable Long userId) {
-        commandService.handle(new DeleteAchievementCommand(id, userId));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAchievement(@PathVariable Long id) {
+        commandService.handle(new DeleteAchievementCommand(id));
         return ResponseEntity.noContent().build();
     }
 }

@@ -37,6 +37,6 @@ public class AchievementCommandServiceImpl implements AchievementCommandService 
 
     @Override
     public void handle(DeleteAchievementCommand command) {
-        achievementRepository.deleteByIdAndUserId(command.achievementId(), command.userId());
+        achievementRepository.deleteById(command.id());
     }
 }
