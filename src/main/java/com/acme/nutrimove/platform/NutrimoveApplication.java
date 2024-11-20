@@ -19,7 +19,7 @@ public class NutrimoveApplication {
         @Override
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/**")
-                    .allowedOrigins("https://nutrimove.netlify.app/")
+                    .allowedOrigins("http://nutrimove.netlify.app/")
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
                     .allowCredentials(true);
