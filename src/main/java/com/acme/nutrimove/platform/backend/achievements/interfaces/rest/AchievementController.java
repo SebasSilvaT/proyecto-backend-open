@@ -1,6 +1,7 @@
 package com.acme.nutrimove.platform.backend.achievements.interfaces.rest;
 
 import com.acme.nutrimove.platform.backend.achievements.domain.model.aggregates.Achievement;
+import com.acme.nutrimove.platform.backend.achievements.domain.model.commands.CreateAchievementCommand;
 import com.acme.nutrimove.platform.backend.achievements.domain.model.commands.DeleteAchievementCommand;
 import com.acme.nutrimove.platform.backend.achievements.domain.model.queries.GetAchievementByIdQuery;
 import com.acme.nutrimove.platform.backend.achievements.domain.services.AchievementCommandService;
@@ -11,6 +12,8 @@ import com.acme.nutrimove.platform.backend.achievements.interfaces.rest.resource
 import com.acme.nutrimove.platform.backend.achievements.interfaces.rest.transform.CreateAchievementCommandFromResourceAssembler;
 import com.acme.nutrimove.platform.backend.achievements.interfaces.rest.transform.AchievementResourceFromEntityAssembler;
 import com.acme.nutrimove.platform.backend.achievements.interfaces.rest.transform.UpdateAchievementCommandFromResourceAssembler;
+import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
+import com.acme.nutrimove.platform.backend.user.domain.services.UserQueryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,22 +32,35 @@ public class AchievementController {
     private final CreateAchievementCommandFromResourceAssembler createAssembler;
     private final UpdateAchievementCommandFromResourceAssembler updateAssembler;
     private final AchievementResourceFromEntityAssembler resourceAssembler;
+    private final UserQueryService userQueryService;
 
     public AchievementController(AchievementCommandService commandService,
                                  AchievementQueryService queryService,
+                                 UserQueryService userQueryService,
                                  CreateAchievementCommandFromResourceAssembler createAssembler,
                                  UpdateAchievementCommandFromResourceAssembler updateAssembler,
                                  AchievementResourceFromEntityAssembler resourceAssembler) {
         this.commandService = commandService;
         this.queryService = queryService;
+        this.userQueryService = userQueryService;
         this.createAssembler = createAssembler;
         this.updateAssembler = updateAssembler;
         this.resourceAssembler = resourceAssembler;
     }
 
+
     @PostMapping
     public ResponseEntity<AchievementResource> createAchievement(@RequestBody CreateAchievementResource resource) {
-        Optional<Achievement> achievement = commandService.handle(createAssembler.toCommand(resource));
+        Optional<User> userOptional = userQueryService.findById(resource.userId());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        User user = userOptional.get();
+
+        CreateAchievementCommand command = createAssembler.toCommand(resource, user);
+
+        Optional<Achievement> achievement = commandService.handle(command, user);
+
         return achievement.map(a -> new ResponseEntity<>(resourceAssembler.toResourceFromEntity(a), CREATED))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }

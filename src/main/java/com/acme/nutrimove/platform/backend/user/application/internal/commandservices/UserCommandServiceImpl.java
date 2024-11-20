@@ -1,5 +1,6 @@
 package com.acme.nutrimove.platform.backend.user.application.internal.commandservices;
 
+import com.acme.nutrimove.platform.backend.user.domain.ValueObjects.Privacy;
 import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
 import com.acme.nutrimove.platform.backend.user.domain.model.commands.CreateUserCommand;
 import com.acme.nutrimove.platform.backend.user.domain.model.commands.DeleteUserCommand;
@@ -45,7 +46,7 @@ public class UserCommandServiceImpl implements UserCommandService {
             user.setLastname(command.lastname());
             user.setEmail(command.email());
             user.setPassword(command.password());
-            user.setPrivacy(User.Privacy.valueOf(command.privacy().toUpperCase()));
+            user.setPrivacy(Privacy.valueOf(command.privacy().toUpperCase()));
             return userRepository.save(user);
         });
     }

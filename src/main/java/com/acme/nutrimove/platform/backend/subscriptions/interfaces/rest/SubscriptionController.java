@@ -1,6 +1,7 @@
 package com.acme.nutrimove.platform.backend.subscriptions.interfaces.rest;
 
 import com.acme.nutrimove.platform.backend.subscriptions.domain.model.aggregates.Subscription;
+import com.acme.nutrimove.platform.backend.subscriptions.domain.model.commands.CreateSubscriptionCommand;
 import com.acme.nutrimove.platform.backend.subscriptions.domain.model.queries.GetSubscriptionByIdQuery;
 import com.acme.nutrimove.platform.backend.subscriptions.domain.services.SubscriptionsCommandService;
 import com.acme.nutrimove.platform.backend.subscriptions.domain.services.SubscriptionsQueryService;
@@ -8,6 +9,8 @@ import com.acme.nutrimove.platform.backend.subscriptions.interfaces.rest.resourc
 import com.acme.nutrimove.platform.backend.subscriptions.interfaces.rest.resources.SubscriptionResource;
 import com.acme.nutrimove.platform.backend.subscriptions.interfaces.rest.transform.CreateSubscriptionCommandFromResourceAssembler;
 import com.acme.nutrimove.platform.backend.subscriptions.interfaces.rest.transform.SubscriptionResourceFromEntityAssembler;
+import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
+import com.acme.nutrimove.platform.backend.user.domain.services.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,10 +30,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class SubscriptionController {
     private final SubscriptionsQueryService subscriptionsQueryService;
     private final SubscriptionsCommandService subscriptionsCommandService;
+    private final UserQueryService userQueryService;
 
-    public SubscriptionController(SubscriptionsQueryService subscriptionsQueryService, SubscriptionsCommandService subscriptionsCommandService) {
+    public SubscriptionController(SubscriptionsQueryService subscriptionsQueryService, SubscriptionsCommandService subscriptionsCommandService, UserQueryService userQueryService) {
         this.subscriptionsQueryService = subscriptionsQueryService;
         this.subscriptionsCommandService = subscriptionsCommandService;
+        this.userQueryService = userQueryService;
     }
 
 
@@ -42,9 +47,14 @@ public class SubscriptionController {
 
     @PostMapping
     public ResponseEntity<SubscriptionResource> createSubscription(@RequestBody CreateSubscriptionResource resource) {
-        Optional<Subscription> subscription = subscriptionsCommandService
-                .handle(CreateSubscriptionCommandFromResourceAssembler.toCommand(resource));
-        return subscription.map(source -> new ResponseEntity<>(SubscriptionResourceFromEntityAssembler.toResourceFromEntity(source), CREATED))
+        Optional< User> userOptional = userQueryService.findById(resource.userId());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        User user = userOptional.get();
+        CreateSubscriptionCommand command = CreateSubscriptionCommandFromResourceAssembler.toCommand(resource, user);
+        Optional<Subscription> subscription = subscriptionsCommandService.handle(command);
+        return subscription.map(source -> ResponseEntity.status(CREATED).body(SubscriptionResourceFromEntityAssembler.toResourceFromEntity(source)))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 

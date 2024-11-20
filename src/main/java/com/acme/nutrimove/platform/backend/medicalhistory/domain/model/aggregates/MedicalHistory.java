@@ -1,5 +1,6 @@
 package com.acme.nutrimove.platform.backend.medicalhistory.domain.model.aggregates;
 
+import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,27 +16,26 @@ public class MedicalHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Setter // Permite actualizar la fecha
+    @Setter
     @Column(nullable = false)
     private LocalDate date;
 
-    @Setter // Permite actualizar la condición médica
+    @Setter
     @Column(name = "medical_condition", nullable = false)
     private String medicalCondition;
 
-    @Setter // Permite actualizar la descripción
+    @Setter
     @Column(nullable = false)
     private String description;
 
-    // Constructor vacío requerido por JPA
-    protected MedicalHistory() {}
+    public MedicalHistory() {}
 
-    // Constructor con parámetros para inicialización
-    public MedicalHistory(Long userId, LocalDate date, String medicalCondition, String description) {
-        this.userId = userId;
+    public MedicalHistory(User user, LocalDate date, String medicalCondition, String description) {
+        this.user = user;
         this.date = date;
         this.medicalCondition = medicalCondition;
         this.description = description;

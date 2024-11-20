@@ -7,6 +7,7 @@ public record UserResource(
         String name,
         String lastname,
         String email,
+        String password,
         LocalDateTime createdAt,
         String privacy
 ) {

@@ -11,6 +11,7 @@ public class UserResourceFromEntityAssembler {
                 user.getName(),
                 user.getLastname(),
                 user.getEmail(),
+                user.getPassword(),
                 user.getCreatedAt(),
                 user.getPrivacy().toString()
         );

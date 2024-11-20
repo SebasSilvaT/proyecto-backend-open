@@ -6,6 +6,8 @@ import com.acme.nutrimove.platform.backend.medicalhistory.domain.model.commands.
 import com.acme.nutrimove.platform.backend.medicalhistory.domain.model.commands.DeleteMedicalHistoryCommand;
 import com.acme.nutrimove.platform.backend.medicalhistory.domain.services.MedicalHistoryCommandService;
 import com.acme.nutrimove.platform.backend.medicalhistory.infrastructure.persistence.jpa.MedicalHistoryRepository;
+import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
+import com.acme.nutrimove.platform.backend.user.infrastructure.persistence.jpa.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,14 +16,21 @@ import java.util.Optional;
 public class MedicalHistoryCommandServiceImpl implements MedicalHistoryCommandService {
 
     private final MedicalHistoryRepository medicalHistoryRepository;
+    private final UserRepository userRepository;
 
-    public MedicalHistoryCommandServiceImpl(MedicalHistoryRepository medicalHistoryRepository) {
+    public MedicalHistoryCommandServiceImpl(MedicalHistoryRepository medicalHistoryRepository, UserRepository userRepository) {
         this.medicalHistoryRepository = medicalHistoryRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Optional<MedicalHistory> handle(CreateMedicalHistoryCommand command) {
-        var medicalHistory = new MedicalHistory(command.userId(), command.date(), command.condition(), command.description());
+        Optional<User> userOptional = userRepository.findById(command.userId());
+        if (userOptional.isEmpty()) {
+            throw new IllegalArgumentException("User not found with ID: " + command.userId());
+        }
+
+        var medicalHistory = new MedicalHistory(userOptional.get(), command.date(), command.condition(), command.description());
         return Optional.of(medicalHistoryRepository.save(medicalHistory));
     }
 
@@ -37,6 +46,6 @@ public class MedicalHistoryCommandServiceImpl implements MedicalHistoryCommandSe
 
     @Override
     public void handle(DeleteMedicalHistoryCommand command) {
-        medicalHistoryRepository.deleteByIdAndUserId(command.id(), command.userId());
+        medicalHistoryRepository.deleteById(command.id());
     }
 }

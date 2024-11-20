@@ -2,14 +2,15 @@ package com.acme.nutrimove.platform.backend.achievements.interfaces.rest.transfo
 
 import com.acme.nutrimove.platform.backend.achievements.domain.model.commands.CreateAchievementCommand;
 import com.acme.nutrimove.platform.backend.achievements.interfaces.rest.resources.CreateAchievementResource;
+import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreateAchievementCommandFromResourceAssembler {
 
-    public CreateAchievementCommand toCommand(CreateAchievementResource resource) {
+    public CreateAchievementCommand toCommand(CreateAchievementResource resource, User user) {
         return new CreateAchievementCommand(
-                resource.userId(),
+                user.getId(),
                 resource.achievement(),
                 resource.date()
         );

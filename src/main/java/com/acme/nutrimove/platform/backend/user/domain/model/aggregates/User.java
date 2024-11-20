@@ -1,5 +1,9 @@
 package com.acme.nutrimove.platform.backend.user.domain.model.aggregates;
 
+import com.acme.nutrimove.platform.backend.Hydration.domain.model.aggregates.Hydration;
+import com.acme.nutrimove.platform.backend.food.domain.model.aggregates.Food;
+import com.acme.nutrimove.platform.backend.subscriptions.domain.model.aggregates.Subscription;
+import com.acme.nutrimove.platform.backend.user.domain.ValueObjects.Privacy;
 import com.acme.nutrimove.platform.backend.user.domain.model.commands.CreateUserCommand;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,10 +13,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Getter
+
 @Configuration
 @EnableJpaAuditing
+@Getter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class User {
@@ -45,12 +52,15 @@ public class User {
     @Column(nullable = false)
     private Privacy privacy;
 
-    // Enum para definir el nivel de privacidad del usuario
-    public enum Privacy {
-        PRIVATE, PUBLIC
-    }
+    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Hydration> hydrations;
 
-    // Constructor que recibe el comando de creación
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Food> foods = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Subscription subscription;
+
     public User(CreateUserCommand command) {
         this.name = command.name();
         this.lastname = command.lastname();
@@ -60,9 +70,5 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Constructor vacío requerido por JPA
     public User() {}
-
-    // Métodos getter y setter para cada campo
-
 }

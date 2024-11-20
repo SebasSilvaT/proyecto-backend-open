@@ -1,8 +1,10 @@
 package com.acme.nutrimove.platform.backend.subscriptions.domain.model.aggregates;
 
 import com.acme.nutrimove.platform.backend.subscriptions.domain.model.commands.CreateSubscriptionCommand;
+import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -33,9 +35,11 @@ public class Subscription {
     @Getter
     private Boolean trial;
 
-    @Column(nullable = false)
-    @Getter
-    private Long userId;
+    @Setter
+    @OneToOne
+    @JoinColumn(name = "id", nullable = false)
+    private User user;
+
 
     // Constructor vacío necesario para JPA
     protected Subscription() {
@@ -46,7 +50,7 @@ public class Subscription {
         this.price = command.price();
         this.monthDuration = command.monthDuration();
         this.trial = command.trial();
-        this.userId = command.userId();
+        this.user = command.user();
     }
 
 }

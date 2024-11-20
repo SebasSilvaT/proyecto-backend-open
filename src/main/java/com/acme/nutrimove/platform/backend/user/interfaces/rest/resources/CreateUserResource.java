@@ -1,11 +1,13 @@
 package com.acme.nutrimove.platform.backend.user.interfaces.rest.resources;
 
+import com.acme.nutrimove.platform.backend.user.domain.ValueObjects.Privacy;
+
 public record CreateUserResource(
         String name,
         String lastname,
         String email,
         String password,
-        String privacy
+        Privacy privacy
 ) {
     public CreateUserResource {
         if (name == null) throw new NullPointerException("name cannot be null");

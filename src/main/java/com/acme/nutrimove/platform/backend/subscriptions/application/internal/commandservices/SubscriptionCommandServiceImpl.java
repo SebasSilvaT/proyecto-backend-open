@@ -22,9 +22,7 @@ public class SubscriptionCommandServiceImpl implements SubscriptionsCommandServi
 
     @Override
     public Optional<Subscription> handle(CreateSubscriptionCommand command) {
-        if (subRepository.existsByPriceAndDescription(command.price(), command.description())) {
-            throw new IllegalArgumentException("Subscription with same description already exists for this price");
-        }
+
         var sub = new Subscription(command);
         var createsub = this.subRepository.save(sub);
         return Optional.of(createsub);

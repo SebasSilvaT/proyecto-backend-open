@@ -2,18 +2,16 @@ package com.acme.nutrimove.platform.backend.medicalhistory.interfaces.rest.trans
 
 import com.acme.nutrimove.platform.backend.medicalhistory.domain.model.aggregates.MedicalHistory;
 import com.acme.nutrimove.platform.backend.medicalhistory.interfaces.rest.resources.MedicalHistoryResource;
-import org.springframework.stereotype.Component;
 
-@Component
 public class MedicalHistoryResourceFromEntityAssembler {
 
-    public MedicalHistoryResource toResourceFromEntity(MedicalHistory medicalHistory) {
+    public static MedicalHistoryResource toResourceFromEntity(MedicalHistory entity) {
         return new MedicalHistoryResource(
-                medicalHistory.getId(),
-                medicalHistory.getUserId(),
-                medicalHistory.getDate(),
-                medicalHistory.getMedicalCondition(),
-                medicalHistory.getDescription()
+                entity.getId(),
+                entity.getUser() != null ? entity.getUser().getId() : null,
+                entity.getDate(),
+                entity.getMedicalCondition(),
+                entity.getDescription()
         );
     }
 }

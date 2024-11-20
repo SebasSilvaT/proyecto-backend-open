@@ -11,5 +11,4 @@ public interface MedicalHistoryRepository extends JpaRepository<MedicalHistory, 
 
     Optional<MedicalHistory> findByIdAndUserId(Long id, Long userId);
 
-    void deleteByIdAndUserId(Long id, Long userId);
 }

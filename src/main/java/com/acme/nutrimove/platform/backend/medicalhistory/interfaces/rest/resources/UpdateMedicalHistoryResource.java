@@ -2,8 +2,4 @@ package com.acme.nutrimove.platform.backend.medicalhistory.interfaces.rest.resou
 
 import java.time.LocalDate;
 
-public record UpdateMedicalHistoryResource(
-        LocalDate date,
-        String medicalCondition,
-        String description
-) {}
+public record UpdateMedicalHistoryResource(Long userId, LocalDate date, String condition, String description) {}

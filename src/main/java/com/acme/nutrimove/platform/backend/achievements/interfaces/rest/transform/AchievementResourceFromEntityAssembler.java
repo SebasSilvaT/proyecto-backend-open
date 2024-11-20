@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class AchievementResourceFromEntityAssembler {
 
-    public AchievementResource toResourceFromEntity(Achievement achievement) {
+    public AchievementResource toResourceFromEntity(Achievement entity) {
         return new AchievementResource(
-                achievement.getId(),
-                achievement.getUserId(),
-                achievement.getAchievement(),
-                achievement.getDate()
+                entity.getId(),
+                entity.getUser() != null ? entity.getUser().getId() : null,
+                entity.getAchievement(),
+                entity.getDate()
         );
     }
 }

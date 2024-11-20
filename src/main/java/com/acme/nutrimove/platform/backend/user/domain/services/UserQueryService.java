@@ -11,6 +11,6 @@ public interface UserQueryService {
 
     List<User> handle(GetAllUsersByEmailQuery query);
     List<User> getAllUsers();
-
+    Optional<User> findById(Long id);
     Optional<User> handle(GetUserByIdQuery query);
 }

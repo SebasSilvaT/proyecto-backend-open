@@ -6,6 +6,7 @@ import com.acme.nutrimove.platform.backend.achievements.domain.model.commands.Up
 import com.acme.nutrimove.platform.backend.achievements.domain.model.commands.DeleteAchievementCommand;
 import com.acme.nutrimove.platform.backend.achievements.domain.services.AchievementCommandService;
 import com.acme.nutrimove.platform.backend.achievements.infrastructure.persistence.jpa.AchievementRepository;
+import com.acme.nutrimove.platform.backend.user.domain.model.aggregates.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,8 +21,8 @@ public class AchievementCommandServiceImpl implements AchievementCommandService 
     }
 
     @Override
-    public Optional<Achievement> handle(CreateAchievementCommand command) {
-        var achievement = new Achievement(command);
+    public Optional<Achievement> handle(CreateAchievementCommand command, User user) {
+        var achievement = new Achievement(command, user);
         return Optional.of(achievementRepository.save(achievement));
     }
 

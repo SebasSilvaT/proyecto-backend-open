@@ -3,6 +3,7 @@ package com.acme.nutrimove.platform.backend.achievements.interfaces.rest.resourc
 import java.time.LocalDate;
 
 public record UpdateAchievementResource(
+        Long achievementId,
         Long userId,
         String achievement,
         LocalDate date
