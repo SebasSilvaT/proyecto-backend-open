@@ -19,7 +19,7 @@ public class NutrimoveApplication {
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/api/v1/**") // Endpoints que permiten CORS
                     .allowedOrigins(
-                            "http://673e677494f3a8000828c568--nutrimove.netlify.app", // Dominio del frontend
+                            "https://673e677494f3a8000828c568--nutrimove.netlify.app", // Dominio del frontend
                             "https://nutrimove.up.railway.app" // Dominio del backend para pruebas
                     )
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
